@@ -1,0 +1,419 @@
+﻿<?php
+require_once('back/conn.php');
+if (!isset($_SESSION)) {
+ 		 session_start();
+	}
+if (!function_exists("GetSQLValueString")) {
+function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") 
+{
+  if (PHP_VERSION < 6) {
+    $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
+  }
+
+  $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
+
+  switch ($theType) {
+    case "text":
+      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
+      break;    
+    case "long":
+    case "int":
+      $theValue = ($theValue != "") ? intval($theValue) : "NULL";
+      break;
+    case "double":
+      $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
+      break;
+    case "date":
+      $theValue = ($theValue != "") ? "" . $theValue . "" : "NULL";
+      break;
+    case "defined":
+      $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
+      break;
+  }
+  return @$theValue;
+}
+}
+$mysqli->set_charset('utf8');
+@$currentPage = $_SERVER["PHP_SELF"];
+@$Recordset1 = $mysqli->query(@$query_limit_Recordset1);
+$result4_str = "select * from sensors where detection like '%位移%' ";
+$result4 = $mysqli->query($result4_str);
+$result5_str = "select * from sensors where detection like '%温度%' ";
+$result5 = $mysqli->query($result5_str);
+$result6_str = "select * from sensors where detection like '%高差%' ";
+$result6 = $mysqli->query($result6_str);
+
+$events4_str = "select * from events where detection like '%位移%' ";
+$events5_str = "select * from events where detection like '%温度%' ";
+$events6_str = "select * from events where detection like '%高差%' ";
+
+$case1 = " and section_mileage like '%JC1%' ";
+$case2 = " and section_mileage like '%JC2%' ";
+$case3 = " and section_mileage like '%JC3%' ";
+$case4 = " and section_mileage like '%JC4%' ";
+$case5 = " and section_mileage like '%JC5%' ";
+//echo $query_limit_Recordset1;
+//var_dump($_POST);
+?>
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="lib/html5shiv.js"></script>
+<script type="text/javascript" src="lib/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />
+<link rel="stylesheet" href="lib/zTree/v3/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+<!--[if IE 6]>
+<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<title>数据管理</title>
+<style>
+a:hover,a:focus{
+		    outline: none;
+		    text-decoration: none;
+		}
+		.tab .nav-tabs{
+		    border-bottom: none;
+		    position: relative;
+		}
+		.tab .nav-tabs li{
+		    margin-right: 5px;
+		    z-index: 1;
+		}
+		.tab .nav-tabs li:after{
+		    content: "";
+		    width: 100%;
+		    position: absolute;
+		    top: 50%;
+		    right: -60%;
+		    z-index: -1;
+		}
+		.tab .nav-tabs li:last-child:after{
+		    border: none;
+		}
+		.tab .nav-tabs li a{
+		    display: block;
+		    padding: 10px 12px;
+		    background: #fff;
+		    font-size: 12px;
+		    font-weight: 600;
+		    color: #6495ED;
+		    text-transform: uppercase;
+		    border-radius: 0;
+		    margin-right: 0;
+		    border: 1px solid #6495ED;
+		    position: relative;
+		    overflow: hidden;
+		    z-index: 1;
+		    transition: all 0.3s ease 0s;
+		    margin-top:5px;
+		}
+		.tab .nav-tabs li.active a,
+		.tab .nav-tabs li a:hover{
+		    color: #fff;
+		    border: 1px solid #6495ED;
+		}
+		.tab .nav-tabs li a:after{
+		    content: "";
+		    display: block;
+		    width: 100%;
+		    height: 0;
+		    position: absolute;
+		    top: 0;
+		    left: 0;
+		    z-index: -1;
+		    transition: all 0.3s ease 0s;
+		}
+		.tab .nav-tabs li.active a:after,
+		.tab .nav-tabs li a:hover:after{
+		    height: 100%;
+		    background: #6495ED;
+		}
+		.tab .tab-content{
+		    padding: 20px 0px;
+		    margin-top: 0;
+		    font-size: 14px;
+		    color: #999;
+		    line-height: 26px;
+		}
+		.tab .tab-content h3{
+		    font-size: 24px;
+		    margin-top: 0;
+		}
+		.tab .nav-tabs li{ 
+			margin: 0 5px 0 0; 
+		}
+		
+		@media only screen and (max-width: 479px){
+		    .tab .nav-tabs li{
+		        width: 100%;
+		        text-align: center;
+		        margin: 0 0 10px 0;
+		    }
+		    .tab .nav-tabs li:after{
+		        width: 0;
+		        height: 100%;
+		        top: auto;
+		        bottom: -60%;
+		        right: 30%;
+		    }
+		}
+</style>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 历史数据 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<table class="table" style="height:100%;margin-top:20px">
+	<tr >
+		<!--<td width="100%" class="va-t"><ul id="treeDemo" class="ztree"></ul></td>-->
+		<td width="100%" class="va-t" height="100px" style="border: 0px">
+		<div class="container">
+		            <div class="row">
+		                <div col-md-10">
+		                    <div class="tab" role="tabpanel">
+		                        <!-- Nav tabs -->
+		                        <ul class="nav nav-tabs" role="tablist">
+		                            <li role="presentation" class="active"><a href="#Section1" aria-controls="home" role="tab" data-toggle="tab">Section 1</a></li>
+		                            <li role="presentation"><a href="#Section2" aria-controls="Section2" role="tab" data-toggle="tab">Section 2</a></li>
+		                            <li role="presentation"><a href="#Section3" aria-controls="Section3" role="tab" data-toggle="tab">Section 3</a></li>
+		                            <li role="presentation"><a href="#Section4" aria-controls="Section4" role="tab" data-toggle="tab">Section 4</a></li>
+		                            <li role="presentation"><a href="#Section5" aria-controls="Section5" role="tab" data-toggle="tab">Section 5</a></li>
+		                            <li role="presentation"><a href="#Section6" aria-controls="Section6" role="tab" data-toggle="tab">Section 6</a></li>
+		                        </ul>
+		                        <!-- Tab panes -->
+		                        <div class="tab-content tabs">
+		                            <div role="tabpanel" class="tab-pane fade in active" id="Section1">
+		                                <h3>Section 1</h3>
+		                                <p>Lorem </p>
+		                            </div>
+		                            <div role="tabpanel" class="tab-pane fade" id="Section2">
+		                                <h3>Section 2</h3>
+		                                <p>Lorem </p>
+		                            </div>
+		                            <div role="tabpanel" class="tab-pane fade" id="Section3">
+		                                <h3>Section 3</h3>
+		                                <p>Lorem </p>
+		                            </div>
+		                            <div role="tabpanel" class="tab-pane fade" id="Section4">
+		                                <h3>Section 4</h3>
+		                                <p>Lorem </p>
+		                            </div>
+		                            <div role="tabpanel" class="tab-pane fade" id="Section5">
+		                                <h3>Section 5</h3>
+		                                <p>Lorem </p>
+		                            </div>
+		                            <div role="tabpanel" class="tab-pane fade" id="Section6">
+		                                <h3>Section 6</h3>
+		                                <p>Lorem </p>
+		                            </div>
+		                        </div>
+		                    </div>
+		                </div>
+		            </div>
+	</div>
+	</td>
+	</tr>
+	<tr>
+		<td class="va-t"><iframe ID="testIframe" Name="testIframe" FRAMEBORDER=0 SCROLLING=AUTO width=100%  height=1700 SRC="statistics-list.php" ></iframe></td>
+	</tr>
+</table>
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script>
+<script>window.jQuery || document.write('<script src="js/jquery-1.11.0.min.js"><\/script>')</script>
+<script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="lib/zTree/v3/js/jquery.ztree.all-3.5.min.js"></script> 
+<script type="text/javascript">
+
+$(function(){
+
+
+});
+
+
+var setting = {
+	view: {
+		dblClickExpand: false,
+		showLine: false,
+		selectedMulti: false
+	},
+	data: {
+		simpleData: {
+			enable:true,
+			idKey: "id",
+			pIdKey: "pId",
+			rootPId: ""
+		}
+	},
+	callback: {
+		beforeClick: function(treeId, treeNode) {
+			var zTree = $.fn.zTree.getZTreeObj("tree");
+			if (treeNode.isParent) {
+				//zTree.expandNode(treeNode);
+				//return false;
+				console.log("statistics-list.php?recordset1="+encodeURIComponent(treeNode.qstr));
+				demoIframe.attr("src","statistics-list.php?recordset2="+encodeURIComponent(treeNode.qstr));
+				return true;
+			} else {
+				demoIframe.attr("src","statistics-list.php?sensor_num="+encodeURIComponent(treeNode.name));
+				return true;
+			}
+		}
+	}
+};
+
+
+var rootNode =[
+	{ id:1, pId:0, name:"南京过江隧道", open:true, qstr:"select * from events"},
+];
+		
+var code;
+function showCode(str) {
+	if (!code) code = $("#code");
+	code.empty();
+	code.append("<li>"+str+"</li>");
+}
+		
+$(function(){
+	
+	
+	var zNode4 = [{ id:14, pId:1, name:"管片接缝位移监测项",qstr:"<?php echo $events4_str;?>"}];
+	var zNode41 = [{ id:141, pId:14, name:"JC1",qstr:"<?php echo $events4_str.$case1;?>"}];
+	var zNode42 = [{ id:142, pId:14, name:"JC2",qstr:"<?php echo $events4_str.$case2;?>"}];
+	var zNode43 = [{ id:143, pId:14, name:"JC3",qstr:"<?php echo $events4_str.$case3;?>"}];
+	var zNode44 = [{ id:144, pId:14, name:"JC4",qstr:"<?php echo $events4_str.$case4;?>"}];
+	var zNode45 = [{ id:145, pId:14, name:"JC5",qstr:"<?php echo $events4_str.$case5;?>"}];
+	
+	var zNode5 = [{ id:15, pId:1, name:"管片温度监测项",qstr:"<?php echo $events5_str;?>"}];
+	var zNode51 = [{ id:151, pId:15, name:"JC1",qstr:"<?php echo $events5_str.$case1;?>"}];
+	var zNode52 = [{ id:152, pId:15, name:"JC2",qstr:"<?php echo $events5_str.$case2;?>"}];
+	var zNode53 = [{ id:153, pId:15, name:"JC3",qstr:"<?php echo $events5_str.$case3;?>"}];
+	var zNode54 = [{ id:154, pId:15, name:"JC4",qstr:"<?php echo $events5_str.$case4;?>"}];
+	var zNode55 = [{ id:155, pId:15, name:"JC5",qstr:"<?php echo $events5_str.$case5;?>"}];
+	
+	var zNode6 = [{ id:16, pId:1, name:"差异沉降监测项",qstr:"<?php echo $events6_str;?>"}];
+	var zNode61 = [{ id:161, pId:16, name:"JC1",qstr:"<?php echo $events6_str.$case1;?>"}];
+	var zNode62 = [{ id:162, pId:16, name:"JC2",qstr:"<?php echo $events6_str.$case2;?>"}];
+	var zNode63 = [{ id:163, pId:16, name:"JC3",qstr:"<?php echo $events6_str.$case3;?>"}];
+	var zNode64 = [{ id:164, pId:16, name:"JC4",qstr:"<?php echo $events6_str.$case4;?>"}];
+	var zNode65 = [{ id:165, pId:16, name:"JC5",qstr:"<?php echo $events6_str.$case5;?>"}];
+
+	var zNodes;
+
+//添加管片接缝监测项的分支
+	<?php while($res1 = $result4->fetch_assoc()) {?>
+		var sensorid = <?php echo $res1['id'];?>;
+		var sensor_segment = <?php echo "'".$res1['section_mileage']."'";?>;
+		var sensorname1 = <?php echo "'".$res1['sensor_num']."'";?>;
+		if(sensor_segment.indexOf('JC1')>=0){
+			sensorid1 = '141'+sensorid;
+			sensorid1 = parseInt(sensorid1);
+			zNode41.push({id:sensorid1,pId:141,name:sensorname1});
+		}else if(sensor_segment.indexOf('JC2')>=0){
+			sensorid1 = '142'+sensorid;
+			sensorid1 = parseInt(sensorid1);
+			zNode42.push({id:sensorid1,pId:142,name:sensorname1});
+		}else if(sensor_segment.indexOf('JC3')>=0){
+			sensorid1 = '143'+sensorid;
+			sensorid1 = parseInt(sensorid1);
+			zNode43.push({id:sensorid1,pId:143,name:sensorname1});
+		}else if(sensor_segment.indexOf('JC4')>=0){
+			sensorid1 = '144'+sensorid;
+			sensorid1 = parseInt(sensorid1);
+			zNode44.push({id:sensorid1,pId:144,name:sensorname1});
+		}else if(sensor_segment.indexOf('JC5')>=0){
+			sensorid1 = '145'+sensorid;
+			sensorid1 = parseInt(sensorid1);
+			zNode45.push({id:sensorid1,pId:145,name:sensorname1});
+		}
+	<?php }?>
+//添加温度监测项的分支
+	<?php while($res1 = $result5->fetch_assoc()) {?>
+		var sensorid = <?php echo $res1['id'];?>;
+		var sensor_segment = <?php echo "'".$res1['section_mileage']."'";?>;
+		var sensorname1 = <?php echo "'".$res1['sensor_num']."'";?>;
+		if(sensor_segment.indexOf('JC1')>=0){
+			sensorid1 = '151'+sensorid;
+			sensorid1 = parseInt(sensorid1);
+			zNode51.push({id:sensorid1,pId:151,name:sensorname1});
+		}else if(sensor_segment.indexOf('JC2')>=0){
+			sensorid1 = '152'+sensorid;
+			sensorid1 = parseInt(sensorid1);
+			zNode52.push({id:sensorid1,pId:152,name:sensorname1});
+		}else if(sensor_segment.indexOf('JC3')>=0){
+			sensorid1 = '153'+sensorid;
+			sensorid1 = parseInt(sensorid1);
+			zNode53.push({id:sensorid1,pId:153,name:sensorname1});
+		}else if(sensor_segment.indexOf('JC4')>=0){
+			sensorid1 = '154'+sensorid;
+			sensorid1 = parseInt(sensorid1);
+			zNode54.push({id:sensorid1,pId:154,name:sensorname1});
+		}else if(sensor_segment.indexOf('JC5')>=0){
+			sensorid1 = '155'+sensorid;
+			sensorid1 = parseInt(sensorid1);
+			zNode55.push({id:sensorid1,pId:155,name:sensorname1});
+		}
+	<?php }?>
+
+//添加差异沉降监测项的分支
+	<?php while($res1 = $result6->fetch_assoc()) {?>
+		var sensorid = <?php echo $res1['id'];?>;
+		var sensor_segment = <?php echo "'".$res1['section_mileage']."'";?>;
+		var sensorname1 = <?php echo "'".$res1['sensor_num']."'";?>;
+		if(sensor_segment.indexOf('JC1')>=0){
+			sensorid1 = '161'+sensorid;
+			sensorid1 = parseInt(sensorid1);
+			zNode61.push({id:sensorid1,pId:161,name:sensorname1});
+		}else if(sensor_segment.indexOf('JC2')>=0){
+			sensorid1 = '162'+sensorid;
+			sensorid1 = parseInt(sensorid1);
+			zNode62.push({id:sensorid1,pId:162,name:sensorname1});
+		}else if(sensor_segment.indexOf('JC3')>=0){
+			sensorid1 = '163'+sensorid;
+			sensorid1 = parseInt(sensorid1);
+			zNode63.push({id:sensorid1,pId:163,name:sensorname1});
+		}else if(sensor_segment.indexOf('JC4')>=0){
+			sensorid1 = '164'+sensorid;
+			sensorid1 = parseInt(sensorid1);
+			zNode64.push({id:sensorid1,pId:164,name:sensorname1});
+		}else if(sensor_segment.indexOf('JC5')>=0){
+			sensorid1 = '165'+sensorid;
+			sensorid1 = parseInt(sensorid1);
+			zNode65.push({id:sensorid1,pId:165,name:sensorname1});
+		}
+	<?php }?>
+
+	
+
+	zNode4 = zNode4.concat(zNode41,zNode42,zNode43,zNode44,zNode45);
+	zNode5 = zNode5.concat(zNode51,zNode52,zNode53,zNode54,zNode55);
+	zNode6 = zNode6.concat(zNode61,zNode62,zNode63,zNode64,zNode65);
+	zNodes = rootNode.concat(zNode4,zNode5,zNode6);
+	
+	var t = $("#treeDemo");
+	t = $.fn.zTree.init(t, setting, zNodes);
+	demoIframe = $("#testIframe");
+	//demoIframe.on("load", loadReady);
+	var zTree = $.fn.zTree.getZTreeObj("tree");
+	//zTree.selectNode(zTree.getNodeByParam("id",'11'));
+});
+</script>
+</body>
+</html>
+<?php $mysqli->close();?>
